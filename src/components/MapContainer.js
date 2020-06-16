@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+import Points from "./Points";
 
 const mapStyles = {
     width: '100%',
@@ -9,10 +10,10 @@ const mapStyles = {
 export class MapContainer extends Component {
 
     state = {
-        showingInfoWindow: false,  //Hides or the shows the infoWindow
-        activeMarker: {},          //Shows the active marker upon click
-        selectedPlace: {},        //Shows the infoWindow to the selected place upon a marker
-        visibilitySideBar : 'hidden'
+        showingInfoWindow: false,       //Hides or the shows the infoWindow
+        activeMarker: {},               //Shows the active marker upon click
+        selectedPlace: {},              //Shows the infoWindow to the selected place upon a marker
+        visibilitySideBar : 'hidden'    //Show or hide sideBar from list points
     };
 
     onMarkerClick = (props, marker, e) =>
@@ -31,54 +32,40 @@ export class MapContainer extends Component {
         }
     };
 
-    showSideBar = () => {
-        this.setState({
-            visibilitySideBar:'visible'
-        });
-    }
 
     render() {
 
-        const {visibilitySideBar} = this.state;
+        const {showingInfoWindow,activeMarker,selectedPlace} = this.state;
+        const {google} = this.props;
 
         return (
            <Fragment>
-               <div className="content">
-                   <Map
-                       google={this.props.google}
-                       zoom={14}
-                       style={mapStyles}
-                       initialCenter={{lat: -1.2884, lng: 36.8233}}
-                   >
-                       <Marker
-                           onClick={this.onMarkerClick}
-                           name={'Kenyatta International Convention Centre'}
-                       />
 
-                       <InfoWindow
-                           marker={this.state.activeMarker}
-                           visible={this.state.showingInfoWindow}
-                           onClose={this.onClose}>
-                           <div>
-                               <h4>{this.state.selectedPlace.name}</h4>
-                           </div>
-                       </InfoWindow>
-                   </Map>
-               </div>
+               <Map
+                   google={google}
+                   zoom={14}
+                   style={mapStyles}
+                   initialCenter={{lat: -1.2884, lng: 36.8233}}
+                   mapTypeControl = {false}
+                   fullscreenControl = {false}
+               >
+                   <Marker
+                       onClick={this.onMarkerClick}
+                       name={'Kenyatta International Convention Centre'}
+                   />
 
-               <div className="button-sidebar" onClick={this.showSideBar}>
-
-               </div>
+                   <InfoWindow
+                       marker={activeMarker}
+                       visible={showingInfoWindow}
+                       onClose={this.onClose}>
+                       <div>
+                           <h4>{selectedPlace.name}</h4>
+                       </div>
+                   </InfoWindow>
+               </Map>
 
 
-
-               <div className="sidebar" style={ { visibility: visibilitySideBar} }>
-                   <span className="active">Home</span>
-                   <span>News</span>
-                   <span>Contact</span>
-                   <span>About</span>
-               </div>
-
+               <Points/>
 
            </Fragment>
         );
