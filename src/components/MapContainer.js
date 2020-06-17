@@ -203,7 +203,6 @@ export class MapContainer extends Component {
 
 }
 
-
 export default GoogleApiWrapper({
-    apiKey: process.env.API_KEY
+    apiKey: process.env.REACT_APP_API_KEY
 })(MapContainer);

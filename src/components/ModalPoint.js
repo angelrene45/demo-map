@@ -70,8 +70,6 @@ class ModalPoint extends Component{
     render() {
 
         const {errors,validated,showModal}  = this.state;
-        const {addMark}                     = this.props;
-
 
         return (
             <React.Fragment>
