@@ -13,6 +13,7 @@ export class MapContainer extends Component {
     state = {};
     modalRef    = React.createRef(); // Referencia al componente hijo para manejar sus eventos <ModalPoint>
     pointsRef   = React.createRef(); // Referencia al componente hijo para manejar sus eventos <Points>
+    markerObjects = {};
 
     constructor(props) {
         super(props);
@@ -22,8 +23,8 @@ export class MapContainer extends Component {
             selectedPlace: {},
             currentClickPosition:{},
             visibilitySideBar : 'hidden'  ,
-            stores: [{name:"test1",latitude: 47.49855629475769, longitude: -122.14184416996333},
-                {name:"test2",latitude: 47.359423, longitude: -122.021071}],
+            stores: [{id:"145",name:"test1",latitude: 47.49855629475769, longitude: -122.14184416996333},
+                {id:"40",name:"test2",latitude: 47.359423, longitude: -122.021071}],
             centerInMap:{
                 lat:47.444,
                 lng: -122.176
@@ -32,22 +33,7 @@ export class MapContainer extends Component {
         }
     }
 
-    onMarkerClick = (props, marker, e) =>
-        this.setState({
-            selectedPlace: props,
-            activeMarker: marker,
-            showingInfoWindow: true
-        });
-
-    onClose = props => {
-        if (this.state.showingInfoWindow) {
-            this.setState({
-                showingInfoWindow: false,
-                activeMarker: null
-            });
-        }
-    };
-
+    /* Click en cualquier parte del mapa */
     handleClickMap = (t, map, coord) =>{
         const { latLng } = coord;
 
@@ -63,7 +49,7 @@ export class MapContainer extends Component {
         // Activamos evento del componente hijo <ModalPoint>
         this.modalRef.current.showModal();
 
-
+        // guadramos la posicion donde el usuario hizo click en el mapa
         this.setState({
             currentClickPosition:newMarker
         });
@@ -78,7 +64,7 @@ export class MapContainer extends Component {
 
         const currentDate = Date.now();
 
-        const newMarket  = {name:namePoint,date:currentDate,...currentClickPosition};
+        const newMarket  = {id:currentDate,name:namePoint,date:currentDate,...currentClickPosition};
 
         const newStores = [...stores,newMarket];
 
@@ -92,18 +78,53 @@ export class MapContainer extends Component {
         // Actualizamos la lista de los puntos en el componente <Points>
         this.pointsRef.current.updateStores(newStores);
 
+        // Crerramos el infoView
+        this.onClose(null);
+        
+        // Mostramos la lista de puntos
+        this.pointsRef.current.showSideBar();
+
     }
 
+    /* Click en el marcador */
+    onMarkerClick = (props, marker, e) =>
+        this.setState({
+            selectedPlace: props,
+            activeMarker: marker,
+            showingInfoWindow: true
+        });
+
+    /* Evento del InfoView */
+    onClose = props => {
+        const {showingInfoWindow} = this.state;
+        if (showingInfoWindow) {
+            this.setState({
+                showingInfoWindow: false,
+                activeMarker: null
+            });
+        }
+    };
+
+    onMarkerMounted = index => element => {
+        this.markerObjects = {
+            ...this.markerObjects,
+            [index]: {...element}
+        };
+    };
+
+    /* Muestra los marcadores en el mapa */
     displayMarkers = () => {
         return this.state.stores.map((store, index) => {
-            return <Marker key={index} id={index} name={store.name} position={{
-                lat: store.latitude,
-                lng: store.longitude
-            }}
+            return <Marker key={index} id={store.id} name={store.name} ref={this.onMarkerMounted(store.id)}
+               position={{
+                    lat: store.latitude,
+                    lng: store.longitude
+               }}
            onClick={this.onMarkerClick} />
         })
     }
 
+    /* Evento que dispara el componente <Points> */
     handleClickPoint = (store) => () => {
         const {latitude,longitude} = store;
 
@@ -117,6 +138,15 @@ export class MapContainer extends Component {
             centerInMap:newCenter,
             defaultZoom:15
         })
+
+        // Mostramos su info view
+        const {marker,props} = this.markerObjects[store.id];
+
+        this.setState({
+            selectedPlace: props,
+            activeMarker: marker,
+            showingInfoWindow: true
+        });
 
     }
 
