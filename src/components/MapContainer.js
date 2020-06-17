@@ -80,7 +80,7 @@ export class MapContainer extends Component {
 
         // Crerramos el infoView
         this.onClose(null);
-        
+
         // Mostramos la lista de puntos
         this.pointsRef.current.showSideBar();
 
@@ -205,5 +205,5 @@ export class MapContainer extends Component {
 
 
 export default GoogleApiWrapper({
-    apiKey: 'AIzaSyDMaqUH_aztx7Veu40W8u_BNRQ6GL26vEA'
+    apiKey: process.env.API_KEY
 })(MapContainer);
