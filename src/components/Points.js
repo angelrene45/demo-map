@@ -2,6 +2,7 @@ import React, {Component, Fragment} from 'react'
 import MenuLogo from "../assets/icons/menu.svg";
 import CloseLogo from "../assets/icons/close.svg";
 import '../assets/css/Points.css';
+import Point from "./Point";
 
 class Points extends Component{
 
@@ -34,7 +35,11 @@ class Points extends Component{
 
 
                 <div className="sidebar" style={ { visibility: visibilitySideBar} }>
-                    <span className="close-button"><img onClick={this.hideSideBar} src={CloseLogo} alt="Close"/></span>
+                    <span className="close-button-span close-button"><img onClick={this.hideSideBar} src={CloseLogo} alt="Close"/></span>
+
+                    <Point/><br/>
+                    <Point/><br/>
+                    <Point/>
                 </div>
             </Fragment>
         );

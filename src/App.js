@@ -1,6 +1,7 @@
 import React from 'react';
 import './assets/css/App.css';
 import MapContainer from "./components/MapContainer";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 
