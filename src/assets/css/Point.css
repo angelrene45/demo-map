@@ -1,5 +1,7 @@
 .image-point{
     grid-area: image;
+    padding: 10px;
+    height: 80px;
 }
 
 .image-point > img{
@@ -7,19 +9,24 @@
     height: 100%;
 }
 
+
 .content-point{
     grid-area: content;
 }
 
 .wrapper-point{
+    height: 90px;
     padding: 10px;
     display: grid;
-    grid-template-columns: 1.3fr 2fr;
+    grid-template-columns: 1fr 2fr;
     grid-template-areas:
     "image content";
+    border-bottom: 1px solid #eee;
+
 }
 
 .wrapper-point:hover{
+    cursor: pointer;
     background-color: rgba(63, 83, 85, 0.05);
 }
 
@@ -31,13 +38,16 @@
 .date-point{
     grid-area: date;
     text-align: end;
+    font-size: small;
+
 }
 
 .wrapper-content{
     padding-left:10px;
+    padding-right:4px;
     height: 100%;
     display: grid;
-    grid-template-rows: 3fr 1fr;
+    grid-template-rows: 1fr 1fr;
     grid-template-areas:
     "name"
     "date";

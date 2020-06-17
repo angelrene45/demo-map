@@ -6,9 +6,19 @@ import Point from "./Point";
 
 class Points extends Component{
 
-    state = {
-        visibilitySideBar : 'hidden'    //Show or hide sideBar from list points
-    };
+    state = {};
+
+    constructor(props) {
+        super(props);
+
+        const {stores} = props;
+
+        this.state = {
+            visibilitySideBar: 'hidden',    // Muestra o oculta el sidebar
+            stores: stores                  // Inicia con las props que se mandan del componente padre <MapCotainer>
+        }
+
+    }
 
     showSideBar = () => {
         this.setState({
@@ -22,10 +32,18 @@ class Points extends Component{
         });
     }
 
+    updateStores = (stores) => {
+        this.setState({
+            stores:stores
+        })
+    }
+
 
     render() {
 
-        const {visibilitySideBar} = this.state;
+        const {visibilitySideBar,stores} = this.state;
+        const {clickPoint}               = this.props;
+
 
         return (
             <Fragment>
@@ -36,10 +54,12 @@ class Points extends Component{
 
                 <div className="sidebar" style={ { visibility: visibilitySideBar} }>
                     <span className="close-button-span close-button"><img onClick={this.hideSideBar} src={CloseLogo} alt="Close"/></span>
+                    { stores.map( (store,index) =>{
+                        return (
+                            <Point store={store} key={index} clickPoint={clickPoint}/>
+                        )
+                    })}
 
-                    <Point/><br/>
-                    <Point/><br/>
-                    <Point/>
                 </div>
             </Fragment>
         );

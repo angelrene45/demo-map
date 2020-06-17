@@ -15,6 +15,7 @@ class ModalPoint extends Component{
                 name:"Campo obligatorio",
             }
         }
+        this.textInput = React.createRef();
     }
 
     handleSubmit = (e) => {
@@ -29,10 +30,11 @@ class ModalPoint extends Component{
             return;
         }
 
-        // Lega aqui cuando todo esta bien
+        // Lega aqui cuando pase las validaciones
         e.preventDefault();
-        const {name} = this.state;
-        alert(name);
+        const {name}        = this.state;
+        const {addMark}     = this.props;
+        addMark(name);
 
     }
 
@@ -50,16 +52,31 @@ class ModalPoint extends Component{
         })
     }
 
+    showModal = () => {
+        this.setState({
+            showModal:true
+        })
+        this.textInput.current.focus();
+        document.addEventListener("keydown", this.escFunction, false);
+    }
+
+    //Cuando el usuario presiona boton esc se cierra el modal
+    escFunction = (e) => {
+        if(e.keyCode === 27) {
+            this.hideModal();
+        }
+    }
 
     render() {
 
-        const {errors,validated,showModal} = this.state;
+        const {errors,validated,showModal}  = this.state;
+        const {addMark}                     = this.props;
 
 
         return (
             <React.Fragment>
 
-                <Modal show={showModal|true}>
+                <Modal show={showModal}>
                     <Modal.Header>Nuevo punto</Modal.Header>
                     <Modal.Body>
                         <Form noValidate validated={validated} onSubmit={this.handleSubmit} ref={ (ref) => { this.form = ref; }} >
@@ -67,7 +84,7 @@ class ModalPoint extends Component{
                                 <Col>
                                     <Form.Group controlId="formUrl">
                                         <Form.Label>Nombre</Form.Label>
-                                        <Form.Control name="name" type="text" required onChange={this.handleChanged}/>
+                                        <Form.Control name="name" type="text" required onChange={this.handleChanged} ref={ this.textInput }  />
                                         <Form.Control.Feedback type="invalid">
                                             {errors.name}
                                         </Form.Control.Feedback>

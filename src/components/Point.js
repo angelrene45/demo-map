@@ -1,18 +1,28 @@
 import React,{Component,Fragment} from 'react'
 import '../assets/css/Point.css'
 
-import IMAGE from '../assets/icons/menu.svg'
+import IMAGE from '../assets/icons/point.svg'
+import Moment from 'react-moment';
+import 'moment/locale/es';
 
 class Point extends Component{
+
+    state = {};
+
     render() {
+
+        const {store,clickPoint} = this.props;
+
+        const {name,date} = store;
+
         return (
             <Fragment>
-                <div className="wrapper-point">
+                <div className="wrapper-point" onClick={clickPoint(store)}>
                     <div className="image-point"><img src={IMAGE} alt="test"/></div>
                     <div className="content-point">
                         <div className="wrapper-content">
-                            <div className="name-point">Las norias 229</div>
-                            <div className="date-point">16-06-2020</div>
+                            <div className="name-point">{name}</div>
+                            <div className="date-point"><Moment interval={30000} fromNow>{date}</Moment></div>
                         </div>
                     </div>
                 </div>
