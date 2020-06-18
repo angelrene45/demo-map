@@ -2,6 +2,8 @@ import React, {Component, Fragment} from 'react';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import Points from "./Points";
 import ModalPoint from "./ModalPoint";
+import { connect } from 'react-redux';
+import { createPoint } from '../store/actions/pointsActions'
 
 const mapStyles = {
     width: '100%',
@@ -12,19 +14,21 @@ export class MapContainer extends Component {
 
     state = {};
     modalRef    = React.createRef(); // Referencia al componente hijo para manejar sus eventos <ModalPoint>
-    pointsRef   = React.createRef(); // Referencia al componente hijo para manejar sus eventos <Points>
     markerObjects = {};
 
     constructor(props) {
         super(props);
+
+        // Datos desde el Reducer points
+        const {stores} = props;
+
         this.state = {
             showingInfoWindow: false,
             activeMarker: {},
             selectedPlace: {},
             currentClickPosition:{},
             visibilitySideBar : 'hidden'  ,
-            stores: [{id:"145",name:"test1",latitude: 47.49855629475769, longitude: -122.14184416996333},
-                {id:"40",name:"test2",latitude: 47.359423, longitude: -122.021071}],
+            stores: stores,
             centerInMap:{
                 lat:47.444,
                 lng: -122.176
@@ -60,29 +64,21 @@ export class MapContainer extends Component {
     /* Evento que manda a llamar el componente hijo <ModalPoint> */
     addMark = (namePoint) => {
 
-        const {currentClickPosition,stores} = this.state;
+        const {currentClickPosition} = this.state;
 
         const currentDate = Date.now();
 
         const newMarket  = {id:currentDate,name:namePoint,date:currentDate,...currentClickPosition};
 
-        const newStores = [...stores,newMarket];
-
-        this.setState({
-            stores:newStores
-        });
+        // Creamos el nuevo punto con redux (pointsReducers.js)
+        const {createPoint} = this.props;
+        createPoint(newMarket)
 
         // Activamos evento del componente hijo <ModalPoint>
         this.modalRef.current.hideModal();
 
-        // Actualizamos la lista de los puntos en el componente <Points>
-        this.pointsRef.current.updateStores(newStores);
-
         // Crerramos el infoView
         this.onClose(null);
-
-        // Mostramos la lista de puntos
-        this.pointsRef.current.showSideBar();
 
     }
 
@@ -114,7 +110,9 @@ export class MapContainer extends Component {
 
     /* Muestra los marcadores en el mapa */
     displayMarkers = () => {
-        return this.state.stores.map((store, index) => {
+        const {stores} = this.props;
+
+        return stores.map((store, index) => {
             return <Marker key={index} id={store.id} name={store.name} ref={this.onMarkerMounted(store.id)}
                position={{
                     lat: store.latitude,
@@ -153,7 +151,7 @@ export class MapContainer extends Component {
 
     render() {
 
-        const {showingInfoWindow,activeMarker,selectedPlace,stores,defaultZoom,centerInMap} = this.state;
+        const {showingInfoWindow,activeMarker,selectedPlace,defaultZoom,centerInMap} = this.state;
         const {google} = this.props;
 
 
@@ -187,8 +185,6 @@ export class MapContainer extends Component {
                </Map>
 
                <Points
-                    ref = {this.pointsRef}
-                    stores = {stores}
                     clickPoint = {this.handleClickPoint}
                />
 
@@ -200,9 +196,20 @@ export class MapContainer extends Component {
            </Fragment>
         );
     }
-
 }
 
-export default GoogleApiWrapper({
+const mapStateToProps = ({points}) =>{
+    return {
+        stores:points.stores
+    }
+}
+
+const mapDispatchToProps = (dispatch) =>{
+    return {
+        createPoint: (newPoint) => dispatch(createPoint(newPoint))
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(GoogleApiWrapper({
     apiKey: process.env.REACT_APP_API_KEY
-})(MapContainer);
+})(MapContainer));

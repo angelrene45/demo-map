@@ -3,6 +3,7 @@ import MenuLogo from "../assets/icons/menu.svg";
 import CloseLogo from "../assets/icons/close.svg";
 import '../assets/css/Points.css';
 import Point from "./Point";
+import { connect } from 'react-redux';
 
 class Points extends Component{
 
@@ -11,11 +12,8 @@ class Points extends Component{
     constructor(props) {
         super(props);
 
-        const {stores} = props;
-
         this.state = {
             visibilitySideBar: 'hidden',    // Muestra o oculta el sidebar
-            stores: stores                  // Inicia con las props que se mandan del componente padre <MapCotainer>
         }
 
     }
@@ -38,11 +36,16 @@ class Points extends Component{
         })
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const {visibilitySideBar} = this.state;
+        if(visibilitySideBar === 'hidden') this.showSideBar()
+    }
+
 
     render() {
 
-        const {visibilitySideBar,stores} = this.state;
-        const {clickPoint}               = this.props;
+        const {visibilitySideBar}   = this.state;
+        const {clickPoint,stores}   = this.props;
 
 
         return (
@@ -66,4 +69,10 @@ class Points extends Component{
     }
 }
 
-export default Points;
+const mapStateToProps = ({points}) =>{
+    return {
+        stores:points.stores
+    }
+}
+
+export default connect(mapStateToProps)(Points);
