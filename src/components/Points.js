@@ -4,8 +4,6 @@ import CloseLogo from "../assets/icons/close.svg";
 import '../assets/css/Points.css';
 import Point from "./Point";
 import {connect} from 'react-redux';
-import {firestoreConnect} from "react-redux-firebase";
-import {compose} from 'redux';
 
 class Points extends Component {
 
@@ -45,7 +43,7 @@ class Points extends Component {
     render() {
 
         const {visibilitySideBar} = this.state;
-        const {clickPoint, stores} = this.props;
+        const {clickPoint,removePoint,stores} = this.props;
 
         return (
             <Fragment>
@@ -58,7 +56,7 @@ class Points extends Component {
                                                                           alt="Close"/></span>
                     {stores.map((store, index) => {
                         return (
-                            <Point store={store} key={index} clickPoint={clickPoint}/>
+                            <Point store={store} key={index} clickPoint={clickPoint} removePoint={removePoint}/>
                         )
                     })}
                 </div>
@@ -79,9 +77,4 @@ const mapStateToProps = ({firestore}) => {
     }
 }
 
-export default compose(
-    connect(mapStateToProps),
-    firestoreConnect([
-        {collection: 'points'} /* Obtenemos toda la collecion de points para mandarla a las props */
-    ])
-)(Points);
+export default connect(mapStateToProps)(Points);

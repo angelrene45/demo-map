@@ -6,11 +6,9 @@ export const createPoint = (newMarket) => {
         const firestore = getFirestore();
 
         try {
-            const resultFireStore = await firestore.collection('points').add({
+            await firestore.collection('points').add({
                 ...newMarket,
-                authorFirstName: "Rene",
-                authorLastName: 'Herrera',
-                authorId: 1546545
+                createdAt:new Date()
             });
 
             // Despachamos en pointsReducer
@@ -23,6 +21,27 @@ export const createPoint = (newMarket) => {
             // Error Firebase
             console.log(e)
         }
+    }
+};
 
+export const deletePoint = ({id}) => {
+    return async (dispatch,getState, {getFirebase,getFirestore}) => {
+
+        // hacer una llamada asincrona a fireStore
+        const firestore = getFirestore();
+
+        try {
+            await firestore.collection('points').doc(id).delete();
+
+            // Despachamos en pointsReducer
+            dispatch({
+                type:'REMOVE_POINT',
+                payload: id
+            });
+
+        } catch (e) {
+            // Error Firebase
+            console.log(e)
+        }
     }
 };

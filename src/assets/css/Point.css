@@ -35,21 +35,35 @@
     grid-area: name;
 }
 
-.date-point{
-    grid-area: date;
-    text-align: end;
-    font-size: small;
-
+.delete-point{
+    grid-area: delete;
 }
+
+.delete-point > img{
+    display: block;
+    margin-left: auto;
+    padding-right: 5px;
+    padding-top: 5px;
+    height: 40%;
+    width: 40%;
+}
+
 
 .wrapper-content{
     padding-left:10px;
     padding-right:4px;
     height: 100%;
     display: grid;
-    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     grid-template-areas:
-    "name"
-    "date";
+    "name delete";
+}
+
+.date-point{
+    grid-area: delete;
+    width: 100%;
+    margin-top: auto;
+    text-align: end;
+    font-size: small;
 }
 

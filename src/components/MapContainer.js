@@ -3,7 +3,7 @@ import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import Points from "./Points";
 import ModalPoint from "./ModalPoint";
 import { connect } from 'react-redux';
-import { createPoint } from '../store/actions/pointsActions'
+import { createPoint, deletePoint } from '../store/actions/pointsActions'
 import { firestoreConnect } from "react-redux-firebase";
 import {compose} from 'redux';
 
@@ -70,7 +70,7 @@ export class MapContainer extends Component {
 
         const currentDate = Date.now();
 
-        const newMarket  = {id:currentDate,name:namePoint,date:currentDate,...currentClickPosition};
+        const newMarket  = {name:namePoint,date:currentDate,...currentClickPosition};
 
         // Creamos el nuevo punto con redux (pointsReducers.js)
         const {createPoint} = this.props;
@@ -103,6 +103,7 @@ export class MapContainer extends Component {
         }
     };
 
+    /* Guardamos los objetos de los marker */
     onMarkerMounted = index => element => {
         this.markerObjects = {
             ...this.markerObjects,
@@ -166,6 +167,14 @@ export class MapContainer extends Component {
 
     }
 
+    handleRemovePoint = (store) => () => {
+        console.log(store)
+
+        // Borramos el punto desde el reducer (pointsReducers.js)
+        const {deletePoint} = this.props;
+        deletePoint(store)
+    }
+
 
     render() {
 
@@ -192,6 +201,7 @@ export class MapContainer extends Component {
 
                <Points
                     clickPoint = {this.handleClickPoint}
+                    removePoint = {this.handleRemovePoint}
                />
 
                <ModalPoint
@@ -218,14 +228,18 @@ const mapStateToProps = ({points,firestore}) =>{
 
 const mapDispatchToProps = (dispatch) =>{
     return {
-        createPoint: (newPoint) => dispatch(createPoint(newPoint))
+        createPoint: (newPoint) => dispatch(createPoint(newPoint)),
+        deletePoint: (point) => dispatch(deletePoint(point))
     }
 }
 
 export default compose(
     connect(mapStateToProps,mapDispatchToProps),
     firestoreConnect([
-        {collection:'points'}
+        {
+            collection:'points',
+            orderBy:['createdAt','desc']
+        }
     ])
 )(GoogleApiWrapper({
     apiKey: process.env.REACT_APP_API_KEY
