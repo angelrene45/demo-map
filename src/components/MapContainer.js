@@ -4,6 +4,8 @@ import Points from "./Points";
 import ModalPoint from "./ModalPoint";
 import { connect } from 'react-redux';
 import { createPoint } from '../store/actions/pointsActions'
+import { firestoreConnect } from "react-redux-firebase";
+import {compose} from 'redux';
 
 const mapStyles = {
     width: '100%',
@@ -198,10 +200,19 @@ export class MapContainer extends Component {
     }
 }
 
-const mapStateToProps = ({points}) =>{
-    return {
-        stores:points.stores
+const mapStateToProps = ({points,firestore}) =>{
+
+    // Comprobamos que ya se recivio informacion desde firestore
+    if (Object.keys(firestore.ordered).length > 0){
+        return {
+            stores: firestore.ordered.points
+        }
+    }else{
+        return {
+            stores: []
+        }
     }
+
 }
 
 const mapDispatchToProps = (dispatch) =>{
@@ -210,6 +221,11 @@ const mapDispatchToProps = (dispatch) =>{
     }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(GoogleApiWrapper({
+export default compose(
+    connect(mapStateToProps,mapDispatchToProps),
+    firestoreConnect([
+        {collection:'points'}
+    ])
+)(GoogleApiWrapper({
     apiKey: process.env.REACT_APP_API_KEY
 })(MapContainer));

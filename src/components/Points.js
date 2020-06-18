@@ -4,6 +4,8 @@ import CloseLogo from "../assets/icons/close.svg";
 import '../assets/css/Points.css';
 import Point from "./Point";
 import { connect } from 'react-redux';
+import { firestoreConnect } from "react-redux-firebase";
+import {compose} from 'redux';
 
 class Points extends Component{
 
@@ -67,10 +69,22 @@ class Points extends Component{
     }
 }
 
-const mapStateToProps = ({points}) =>{
-    return {
-        stores:points.stores
+const mapStateToProps = ({firestore}) =>{
+
+    if (Object.keys(firestore.ordered).length > 0){
+       return {
+           stores: firestore.ordered.points
+       }
+    }else{
+        return {
+            stores: []
+        }
     }
 }
 
-export default connect(mapStateToProps)(Points);
+export default compose(
+    connect(mapStateToProps),
+    firestoreConnect([
+        {collection:'points'}
+    ])
+)(Points);
