@@ -6,15 +6,12 @@ import {createStore, applyMiddleware, compose} from 'redux';
 import rootReducer from "./reducers/rootReducer";
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
-import {
-    reduxFirestore,
-    getFirestore,
-    createFirestoreInstance
-} from "redux-firestore";
+import { reduxFirestore, getFirestore, createFirestoreInstance } from "redux-firestore";
 import { ReactReduxFirebaseProvider, getFirebase } from "react-redux-firebase";
 import fbConfig from "./config/fbConfig";
 import firebase from "firebase/app";
 
+/* uso de thunk para hacer llamadas asincronas a la api de Firestore */
 const store = createStore(
     rootReducer,
     compose(
@@ -23,6 +20,7 @@ const store = createStore(
     )
 );
 
+/*  Props para el componente <ReacrReduxFirebaseProvider> */
 const rrfProps = {
     firebase,
     config: fbConfig,
@@ -34,7 +32,7 @@ const rrfProps = {
 ReactDOM.render(
     <Provider store={store}>
         <ReactReduxFirebaseProvider {...rrfProps}>
-            <App />
+            <App/>
         </ReactReduxFirebaseProvider>
     </Provider>,
   document.getElementById('root')

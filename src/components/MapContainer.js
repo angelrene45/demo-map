@@ -16,7 +16,7 @@ export class MapContainer extends Component {
 
     state = {};
     modalRef    = React.createRef(); // Referencia al componente hijo para manejar sus eventos <ModalPoint>
-    markerObjects = {};
+    markerObjects = {};  /* Objeto que contendra los objetos de los marcadores actuales */
 
     constructor(props) {
         super(props);
@@ -26,16 +26,16 @@ export class MapContainer extends Component {
 
         this.state = {
             showingInfoWindow: false,
-            activeMarker: {},
-            selectedPlace: {},
-            currentClickPosition:{},
-            visibilitySideBar : 'hidden'  ,
+            activeMarker: {},               /* objeto del marcador activo actualmente (click en el marcador) */
+            selectedPlace: {},              /* informacion del marcador que se le hizo click */
+            currentClickPosition:{},        /* indica la posicion (lat,lon) que el usuario ha clickeado */
+            visibilitySideBar : 'hidden',   /* por defecto el sideBar oculto */
             stores: stores,
-            centerInMap:{
+            centerInMap:{                   /* Ayuda a mover la posicion del mapa  */
                 lat:47.444,
                 lng: -122.176
             },
-            defaultZoom:11
+            defaultZoom:11                  /* Zoom por defecto que se muestra */
         }
     }
 
@@ -124,6 +124,22 @@ export class MapContainer extends Component {
         })
     }
 
+    /* Ventana del marcador con la informacion del marcador (1 ventana para todos los marcadores)*/
+    displayInfoWindow = () => {
+        const {showingInfoWindow,activeMarker,selectedPlace} = this.state;
+
+        return (
+            <InfoWindow
+                marker={activeMarker}
+                visible={showingInfoWindow}
+                onClose={this.onClose}>
+                <div>
+                    <h4>{selectedPlace.name}</h4>
+                </div>
+            </InfoWindow>
+        )
+    }
+
     /* Evento que dispara el componente <Points> */
     handleClickPoint = (store) => () => {
         const {latitude,longitude} = store;
@@ -153,7 +169,7 @@ export class MapContainer extends Component {
 
     render() {
 
-        const {showingInfoWindow,activeMarker,selectedPlace,defaultZoom,centerInMap} = this.state;
+        const {defaultZoom,centerInMap} = this.state;
         const {google} = this.props;
 
 
@@ -170,20 +186,8 @@ export class MapContainer extends Component {
                    fullscreenControl = {false}
                    onClick={this.handleClickMap}
                >
-
                    {this.displayMarkers()}
-
-                   <InfoWindow
-                       marker={activeMarker}
-                       visible={showingInfoWindow}
-                       onClose={this.onClose}>
-                       <div>
-                           <h4>{selectedPlace.name}</h4>
-                       </div>
-                   </InfoWindow>
-
-
-
+                   {this.displayInfoWindow()}
                </Map>
 
                <Points
@@ -201,9 +205,7 @@ export class MapContainer extends Component {
 }
 
 const mapStateToProps = ({points,firestore}) =>{
-
-    // Comprobamos que ya se recivio informacion desde firestore
-    if (Object.keys(firestore.ordered).length > 0){
+    if (Object.keys(firestore.ordered).length > 0){ // Comprobamos que ya se recibio informacion desde firestore
         return {
             stores: firestore.ordered.points
         }
@@ -212,7 +214,6 @@ const mapStateToProps = ({points,firestore}) =>{
             stores: []
         }
     }
-
 }
 
 const mapDispatchToProps = (dispatch) =>{

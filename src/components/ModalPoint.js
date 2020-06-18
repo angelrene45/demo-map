@@ -55,12 +55,14 @@ class ModalPoint extends Component{
     showModal = () => {
         this.setState({
             showModal:true
-        })
+        });
+        /* Muestra modal y hecmos foco en el input nombre */
         this.textInput.current.focus();
+        /* Activa evento cuando se presione trecla ESC */
         document.addEventListener("keydown", this.escFunction, false);
     }
 
-    //Cuando el usuario presiona boton esc se cierra el modal
+    //Cuando el usuario presiona tecla esc se cierra el modal
     escFunction = (e) => {
         if(e.keyCode === 27) {
             this.hideModal();

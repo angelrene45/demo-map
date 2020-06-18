@@ -3,11 +3,11 @@ import MenuLogo from "../assets/icons/menu.svg";
 import CloseLogo from "../assets/icons/close.svg";
 import '../assets/css/Points.css';
 import Point from "./Point";
-import { connect } from 'react-redux';
-import { firestoreConnect } from "react-redux-firebase";
+import {connect} from 'react-redux';
+import {firestoreConnect} from "react-redux-firebase";
 import {compose} from 'redux';
 
-class Points extends Component{
+class Points extends Component {
 
     state = {};
 
@@ -22,20 +22,20 @@ class Points extends Component{
 
     showSideBar = () => {
         this.setState({
-            visibilitySideBar:'visible'
+            visibilitySideBar: 'visible'
         });
     }
 
     hideSideBar = () => {
         this.setState({
-            visibilitySideBar:'hidden',
+            visibilitySideBar: 'hidden',
         });
     }
 
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         // Si es un cambio de las props por el reducer mostramos el sideBar
-        if(prevProps.stores.length !== this.props.stores.length) {
+        if (prevProps.stores.length !== this.props.stores.length) {
             const {visibilitySideBar} = this.state;
             if (visibilitySideBar === 'hidden') this.showSideBar()
         }
@@ -44,9 +44,8 @@ class Points extends Component{
 
     render() {
 
-        const {visibilitySideBar}   = this.state;
-        const {clickPoint,stores}   = this.props;
-
+        const {visibilitySideBar} = this.state;
+        const {clickPoint, stores} = this.props;
 
         return (
             <Fragment>
@@ -54,28 +53,26 @@ class Points extends Component{
                     <img src={MenuLogo} alt="toggle"/>
                 </div>
 
-
-                <div className="sidebar" style={ { visibility: visibilitySideBar} }>
-                    <span className="close-button-span close-button"><img onClick={this.hideSideBar} src={CloseLogo} alt="Close"/></span>
-                    { stores.map( (store,index) =>{
+                <div className="sidebar" style={{visibility: visibilitySideBar}}>
+                    <span className="close-button-span close-button"><img onClick={this.hideSideBar} src={CloseLogo}
+                                                                          alt="Close"/></span>
+                    {stores.map((store, index) => {
                         return (
                             <Point store={store} key={index} clickPoint={clickPoint}/>
                         )
                     })}
-
                 </div>
             </Fragment>
         );
     }
 }
 
-const mapStateToProps = ({firestore}) =>{
-
-    if (Object.keys(firestore.ordered).length > 0){
-       return {
-           stores: firestore.ordered.points
-       }
-    }else{
+const mapStateToProps = ({firestore}) => {
+    if (Object.keys(firestore.ordered).length > 0) { /* Validacion que contenga informacion la colleccion de points */
+        return {
+            stores: firestore.ordered.points
+        }
+    } else {
         return {
             stores: []
         }
@@ -85,6 +82,6 @@ const mapStateToProps = ({firestore}) =>{
 export default compose(
     connect(mapStateToProps),
     firestoreConnect([
-        {collection:'points'}
+        {collection: 'points'} /* Obtenemos toda la collecion de points para mandarla a las props */
     ])
 )(Points);
