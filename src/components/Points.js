@@ -13,7 +13,7 @@ class Points extends Component{
         super(props);
 
         this.state = {
-            visibilitySideBar: 'hidden',    // Muestra o oculta el sidebar
+            visibilitySideBar: 'hidden'  // Muestra o oculta el sidebar
         }
 
     }
@@ -26,19 +26,17 @@ class Points extends Component{
 
     hideSideBar = () => {
         this.setState({
-            visibilitySideBar:'hidden'
+            visibilitySideBar:'hidden',
         });
     }
 
-    updateStores = (stores) => {
-        this.setState({
-            stores:stores
-        })
-    }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        const {visibilitySideBar} = this.state;
-        if(visibilitySideBar === 'hidden') this.showSideBar()
+        // Si es un cambio de las props por el reducer mostramos el sideBar
+        if(prevProps.stores.length !== this.props.stores.length) {
+            const {visibilitySideBar} = this.state;
+            if (visibilitySideBar === 'hidden') this.showSideBar()
+        }
     }
 
 
